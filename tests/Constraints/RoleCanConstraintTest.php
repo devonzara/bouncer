@@ -4,7 +4,7 @@ use Silber\Bouncer\Database\Role;
 
 class RoleCanConstraintTest extends BaseTestCase
 {
-    public function test_role_can_be_constrained_to_an_ability()
+    public function test_role_can_be_constrained_to_an_permission()
     {
         $bouncer = $this->bouncer();
 
@@ -17,7 +17,7 @@ class RoleCanConstraintTest extends BaseTestCase
         $this->assertEquals('admin', $roles->first()->name);
     }
 
-    public function test_users_can_be_constrained_to_a_model_ability()
+    public function test_users_can_be_constrained_to_a_model_permission()
     {
         $bouncer = $this->bouncer($user = User::create());
 
@@ -36,7 +36,7 @@ class RoleCanConstraintTest extends BaseTestCase
         $this->assertCount(2, $roles);
     }
 
-    public function test_users_can_be_constrained_to_a_model_blanket_ability()
+    public function test_users_can_be_constrained_to_a_model_blanket_permission()
     {
         $bouncer = $this->bouncer($user = User::create());
 

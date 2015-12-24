@@ -8,12 +8,12 @@ use Silber\Bouncer\Clipboard;
 use Silber\Bouncer\Conductors\ChecksRole;
 use Silber\Bouncer\Conductors\AssignsRole;
 use Silber\Bouncer\Conductors\RemovesRole;
-use Silber\Bouncer\Conductors\GivesAbility;
-use Silber\Bouncer\Conductors\RemovesAbility;
+use Silber\Bouncer\Conductors\GivesPermission;
+use Silber\Bouncer\Conductors\RemovesPermission;
 use Silber\Bouncer\Database\Constraints\Roles as RolesConstraint;
-use Silber\Bouncer\Database\Constraints\Abilities as AbilitiesConstraint;
+use Silber\Bouncer\Database\Constraints\Permissions as PermissionsConstraint;
 
-trait HasRolesAndAbilities
+trait HasRolesAndPermissions
 {
     /**
      * The roles relationship.
@@ -22,53 +22,53 @@ trait HasRolesAndAbilities
      */
     public function roles()
     {
-        return $this->belongsToMany(Models::classname(Role::class), 'user_roles');
+        return $this->belongsToMany(Models::classname(Role::class));
     }
 
     /**
-     * The Abilities relationship.
+     * The Permissions relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function abilities()
+    public function permissions()
     {
-        return $this->belongsToMany(Models::classname(Ability::class), 'user_abilities');
+        return $this->belongsToMany(Models::classname(Permission::class));
     }
 
     /**
-     * Get all of the user's abilities.
+     * Get all of the user's permissions.
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAbilities()
+    public function getPermissions()
     {
-        return $this->getClipboardInstance()->getAbilities($this);
+        return $this->getClipboardInstance()->getPermissions($this);
     }
 
     /**
-     * Give abilities to the user.
+     * Give permissions to the user.
      *
-     * @param  mixed  $ability
+     * @param  mixed  $permission
      * @param  mixed|null  $model
      * @return $this
      */
-    public function allow($ability, $model = null)
+    public function allow($permission, $model = null)
     {
-        (new GivesAbility($this))->to($ability, $model);
+        (new GivesPermission($this))->to($permission, $model);
 
         return $this;
     }
 
     /**
-     * Remove abilities from the user.
+     * Remove permissions from the user.
      *
-     * @param  mixed  $ability
+     * @param  mixed  $permission
      * @param  mixed|null  $model
      * @return $this
      */
-    public function disallow($ability, $model = null)
+    public function disallow($permission, $model = null)
     {
-        (new RemovesAbility($this))->to($ability, $model);
+        (new RemovesPermission($this))->to($permission, $model);
 
         return $this;
     }
@@ -145,16 +145,16 @@ trait HasRolesAndAbilities
     }
 
     /**
-     * Constrain the given query by the provided ability.
+     * Constrain the given query by the provided permission.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return void
      */
-    public function scopeWhereCan($query, $ability, $model = null)
+    public function scopeWhereCan($query, $permission, $model = null)
     {
-        (new AbilitiesConstraint)->constrainUsers($query, $ability, $model);
+        (new PermissionsConstraint)->constrainUsers($query, $permission, $model);
     }
 
     /**

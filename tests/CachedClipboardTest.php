@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CachedClipboardTest extends BaseTestCase
 {
-    public function test_it_caches_abilities()
+    public function test_it_caches_permissions()
     {
         $cache = new ArrayStore;
 
@@ -83,7 +83,7 @@ class CachedClipboardTest extends BaseTestCase
     }
 
     /**
-     * Get the user's abilities from the given cache instance through the clipboard.
+     * Get the user's permissions from the given cache instance through the clipboard.
      *
      * @param  \Illuminate\Cache\ArrayStore  $cache
      * @param  \Illuminate\Database\Eloquent\Model  $user
@@ -93,9 +93,9 @@ class CachedClipboardTest extends BaseTestCase
     {
         $clipboard = new CachedClipboard($cache);
 
-        $abilities = $clipboard->getAbilities($user)->lists('name');
+        $permissions = $clipboard->getPermissions($user)->lists('name');
 
-        return $abilities->sort()->values()->all();
+        return $permissions->sort()->values()->all();
     }
 
     /**

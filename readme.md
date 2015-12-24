@@ -6,44 +6,44 @@ This package adds a bouncer at Laravel's access gate.
 - [Installation](#installation)
   - [Enabling cache](#enabling-cache)
 - [Usage](#usage)
-  - [Creating roles and abilities](#creating-roles-and-abilities)
+  - [Creating roles and permissions](#creating-roles-and-permissions)
   - [Assigning roles to a user](#assigning-roles-to-a-user)
-  - [Giving a user an ability directly](#giving-a-user-an-ability-directly)
-  - [Restricting an ability to a model](#restricting-an-ability-to-a-model)
+  - [Giving a user an permission directly](#giving-a-user-an-permission-directly)
+  - [Restricting an permission to a model](#restricting-an-permission-to-a-model)
   - [Retracting a role from a user](#retracting-a-role-from-a-user)
-  - [Removing an ability](#removing-an-ability)
+  - [Removing an permission](#removing-an-permission)
   - [Checking a user's roles](#checking-a-users-roles)
-  - [Getting all abilities for a user](#getting-all-abilities-for-a-user)
+  - [Getting all permissions for a user](#getting-all-permissions-for-a-user)
   - [Authorizing users](#authorizing-users)
   - [Refreshing the cache](#refreshing-the-cache)
-  - [Seeding roles and abilities](#seeding-roles-and-abilities)
+  - [Seeding roles and permissions](#seeding-roles-and-permissions)
 - [Cheat sheet](#cheat-sheet)
 - [License](#license)
 
 ## Introduction
 
-Bouncer provides a mechanism to handle roles and abilities in [Laravel's ACL](http://laravel.com/docs/5.1/authorization). With an expressive and fluent syntax, it stays out of your way as much as possible: use it when you want, ignore it when you don't.
+Bouncer provides a mechanism to handle roles and permissions in [Laravel's ACL](http://laravel.com/docs/5.1/authorization). With an expressive and fluent syntax, it stays out of your way as much as possible: use it when you want, ignore it when you don't.
 
 For a quick, glanceable list of Bouncer's features, check out [the cheat sheet](#cheat-sheet).
 
-Bouncer works well with other abilities you have hard-coded in your own app. Your code always takes precedence: if your code allows an action, the bouncer will not interfere.
+Bouncer works well with other permissions you have hard-coded in your own app. Your code always takes precedence: if your code allows an action, the bouncer will not interfere.
 
 
 Once installed, you can simply tell the bouncer what you want to allow at the gate:
 
 ```php
-// Give a user the ability to create posts
+// Give a user the permission to create posts
 Bouncer::allow($user)->to('create', Post::class);
 
 // Alternatively, do it through a role
 Bouncer::allow('admin')->to('create', Post::class);
 Bouncer::assign('admin')->to($user);
 
-// You can also grant an ability only to a specific model
+// You can also grant an permission only to a specific model
 Bouncer::allow($user)->to('edit', $post);
 ```
 
-When you check abilities at the gate, the bouncer will be consulted first. If he sees an ability that has been granted to the current user (whether directly, or through a role) he'll authorize the check.
+When you check permissions at the gate, the bouncer will be consulted first. If he sees an permission that has been granted to the current user (whether directly, or through a role) he'll authorize the check.
 
 ## Installation
 
@@ -72,11 +72,11 @@ This part is optional. If you don't want to use the facade, you can skip step 2.
 3) Add the bouncer's trait to your user model:
 
 ```php
-use Silber\Bouncer\Database\HasRolesAndAbilities;
+use Silber\Bouncer\Database\HasRolesAndPermissions;
 
 class User extends Model
 {
-    use HasRolesAndAbilities;
+    use HasRolesAndPermissions;
 }
 ```
 
@@ -100,23 +100,23 @@ All queries executed by the bouncer are cached for the current request. For bett
 Bouncer::cache();
 ```
 
-> **Warning:** if you enable cross-request caching, you are responsible to refresh the cache whenever you make changes to user's abilities/roles. For how to refresh the cache, read [refreshing the cache](#refreshing-the-cache).
+> **Warning:** if you enable cross-request caching, you are responsible to refresh the cache whenever you make changes to user's permissions/roles. For how to refresh the cache, read [refreshing the cache](#refreshing-the-cache).
 
 ## Usage
 
-Adding roles and abilities to users is made extremely easy. You do not have to create a role or an ability in advance. Simply pass the name of the role/ability, and Bouncer will create it if it doesn't exist.
+Adding roles and permissions to users is made extremely easy. You do not have to create a role or an permission in advance. Simply pass the name of the role/permission, and Bouncer will create it if it doesn't exist.
 
 > **Note:** the examples below all use the `Bouncer` facade. If you don't like facades, you can instead inject an instance of `Silber\Bouncer\Bouncer` into your class.
 
-### Creating roles and abilities
+### Creating roles and permissions
 
-Let's create a role called `admin` and give it the ability to `ban-users` from our site:
+Let's create a role called `admin` and give it the permission to `ban-users` from our site:
 
 ```php
 Bouncer::allow('admin')->to('ban-users');
 ```
 
-That's it. Behind the scenes, Bouncer will create both a `Role` model and an `Ability` model for you.
+That's it. Behind the scenes, Bouncer will create both a `Role` model and an `Permission` model for you.
 
 ### Assigning roles to a user
 
@@ -132,9 +132,9 @@ Alternatively, you can call the `assign` method directly on the user:
 $user->assign('admin');
 ```
 
-### Giving a user an ability directly
+### Giving a user an permission directly
 
-Sometimes you might want to give a user an ability directly, without using a role:
+Sometimes you might want to give a user an permission directly, without using a role:
 
 ```php
 Bouncer::allow($user)->to('ban-users');
@@ -146,15 +146,15 @@ Here too you can accomplish the same directly off of the user:
 $user->allow('ban-users');
 ```
 
-### Restricting an ability to a model
+### Restricting an permission to a model
 
-Sometimes you might want to restrict an ability to a specific model type. Simply pass the model name as a second argument:
+Sometimes you might want to restrict an permission to a specific model type. Simply pass the model name as a second argument:
 
 ```php
 Bouncer::allow($user)->to('edit', Post::class);
 ```
 
-If you want to restrict the ability to a specific model instance, pass in the actual model instead:
+If you want to restrict the permission to a specific model instance, pass in the actual model instead:
 
 ```php
 Bouncer::allow($user)->to('edit', $post);
@@ -174,9 +174,9 @@ Or do it directly on the user:
 $user->retract('admin');
 ```
 
-### Removing an ability
+### Removing an permission
 
-The bouncer can also remove an ability previously granted to a user:
+The bouncer can also remove an permission previously granted to a user:
 
 ```php
 Bouncer::disallow($user)->to('ban-users');
@@ -188,23 +188,23 @@ Or directly on the user:
 $user->disallow('ban-users');
 ```
 
-> **Note:** if the user has a role that allows them to `ban-users` they will still have that ability. To disallow it, either remove the ability from the role or retract the role from the user.
+> **Note:** if the user has a role that allows them to `ban-users` they will still have that permission. To disallow it, either remove the permission from the role or retract the role from the user.
 
-If the ability has been granted through a role, tell the bouncer to remove the ability from the role instead:
+If the permission has been granted through a role, tell the bouncer to remove the permission from the role instead:
 
 ```php
 Bouncer::disallow('admin')->to('ban-users');
 ```
 
-To remove an ability for a specific model type, pass in its name as a second argument:
+To remove an permission for a specific model type, pass in its name as a second argument:
 
 ```php
 Bouncer::disallow($user)->to('delete', Post::class);
 ```
 
-> **Warning:** if the user has an ability to `delete` a specific `$post` instance, the code above will *not* remove that ability. You will have to remove the ability separately - by passing in the actual `$post` as a second argument - as shown below.
+> **Warning:** if the user has an permission to `delete` a specific `$post` instance, the code above will *not* remove that permission. You will have to remove the permission separately - by passing in the actual `$post` as a second argument - as shown below.
 
-To remove an ability for a specific model instance, pass in the actual model instead:
+To remove an permission for a specific model instance, pass in the actual model instead:
 
 ```php
 Bouncer::disallow($user)->to('delete', $post);
@@ -212,7 +212,7 @@ Bouncer::disallow($user)->to('delete', $post);
 
 ### Checking a user's roles
 
-> **Note**: Generally speaking, you should not have a need to check roles directly. It is better to allow a role certain abilities, then check for those abilities instead. If what you need is very general, you can create very broad abilities. For example, an `access-dashboard` ability is always better than checking for `admin` or `editor` roles directly. For the rare occasion that you do want to check a role, that functionality is available here.
+> **Note**: Generally speaking, you should not have a need to check roles directly. It is better to allow a role certain permissions, then check for those permissions instead. If what you need is very general, you can create very broad permissions. For example, an `access-dashboard` permission is always better than checking for `admin` or `editor` roles directly. For the rare occasion that you do want to check a role, that functionality is available here.
 
 The bouncer can check if a user has a specific role:
 
@@ -262,25 +262,25 @@ $user->isNot('admin');
 $user->isAll('editor', 'moderator');
 ```
 
-### Getting all abilities for a user
+### Getting all permissions for a user
 
-You can get all abilities for a user directly from the user model:
+You can get all permissions for a user directly from the user model:
 
 ```php
-$abilities = $user->getAbilities();
+$permissions = $user->getPermissions();
 ```
 
-This will return a collection of the user's abilities, including any abilities granted to the user through their roles.
+This will return a collection of the user's permissions, including any permissions granted to the user through their roles.
 
 ### Authorizing users
 
-Authorizing users is handled directly at [Laravel's `Gate`](http://laravel.com/docs/5.1/authorization#checking-abilities), or on the user model (`$user->can($ability)`).
+Authorizing users is handled directly at [Laravel's `Gate`](http://laravel.com/docs/5.1/authorization#checking-permissions), or on the user model (`$user->can($permission)`).
 
 For convenience, the bouncer class provides two passthrough methods:
 
 ```php
-Bouncer::allows($ability);
-Bouncer::denies($ability);
+Bouncer::allows($permission);
+Bouncer::denies($permission);
 ```
 
 These call directly into the `Gate` class.
@@ -303,9 +303,9 @@ Alternatively, you can refresh the cache only for a specific user:
 Bouncer::refreshFor($user);
 ```
 
-### Seeding roles and abilities
+### Seeding roles and permissions
 
-Depending on your project, you might have a set of roles and abilities that you want to pre-seed when you deploy your application. Bouncer ships with seeding functionality to make this as easy as possible.
+Depending on your project, you might have a set of roles and permissions that you want to pre-seed when you deploy your application. Bouncer ships with seeding functionality to make this as easy as possible.
 
 First, register your seeding callback in your `AppServiceProvider`'s `boot` method:
 
@@ -401,7 +401,7 @@ $check = $user->is('moderator', 'editor');
 $check = $user->isAll('moderator', 'editor');
 $check = $user->isNot('subscriber', 'moderator');
 
-$abilities = $user->getAbilities();
+$permissions = $user->getPermissions();
 ```
 
 ## License

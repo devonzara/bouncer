@@ -14,8 +14,8 @@ use Silber\Bouncer\Database\Models;
 use Silber\Bouncer\Conductors\ChecksRole;
 use Silber\Bouncer\Conductors\AssignsRole;
 use Silber\Bouncer\Conductors\RemovesRole;
-use Silber\Bouncer\Conductors\GivesAbility;
-use Silber\Bouncer\Conductors\RemovesAbility;
+use Silber\Bouncer\Conductors\GivesPermission;
+use Silber\Bouncer\Conductors\RemovesPermission;
 
 class Bouncer
 {
@@ -78,25 +78,25 @@ class Bouncer
     }
 
     /**
-     * Start a chain, to allow the given role a ability.
+     * Start a chain, to allow the given role a permission.
      *
      * @param  \Silber\Bouncer\Database\Role|string  $role
-     * @return \Silber\Bouncer\Conductors\GivesAbility
+     * @return \Silber\Bouncer\Conductors\GivesPermission
      */
     public function allow($role)
     {
-        return new GivesAbility($role);
+        return new GivesPermission($role);
     }
 
     /**
-     * Start a chain, to disallow the given role a ability.
+     * Start a chain, to disallow the given role a permission.
      *
      * @param  \Silber\Bouncer\Database\Role|string  $role
-     * @return \Silber\Bouncer\Conductors\RemovesAbility
+     * @return \Silber\Bouncer\Conductors\RemovesPermission
      */
     public function disallow($role)
     {
-        return new RemovesAbility($role);
+        return new RemovesPermission($role);
     }
 
     /**
@@ -207,27 +207,27 @@ class Bouncer
     }
 
     /**
-     * Determine if the given ability should be granted for the current user.
+     * Determine if the given permission should be granted for the current user.
      *
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  array|mixed  $arguments
      * @return bool
      */
-    public function allows($ability, $arguments = [])
+    public function allows($permission, $arguments = [])
     {
-        return $this->getGate(true)->allows($ability, $arguments);
+        return $this->getGate(true)->allows($permission, $arguments);
     }
 
     /**
-     * Determine if the given ability should be denied for the current user.
+     * Determine if the given permission should be denied for the current user.
      *
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  array|mixed  $arguments
      * @return bool
      */
-    public function denies($ability, $arguments = [])
+    public function denies($permission, $arguments = [])
     {
-        return $this->getGate(true)->denies($ability, $arguments);
+        return $this->getGate(true)->denies($permission, $arguments);
     }
 
     /**
@@ -242,24 +242,24 @@ class Bouncer
     }
 
     /**
-     * Get an instance of the ability model.
+     * Get an instance of the permission model.
      *
      * @param  array  $attributes
-     * @return \Silber\Bouncer\Database\Ability
+     * @return \Silber\Bouncer\Database\Permission
      */
-    public function ability(array $attributes = [])
+    public function permission(array $attributes = [])
     {
-        return Models::ability($attributes);
+        return Models::permission($attributes);
     }
 
     /**
-     * Set the model to be used for abilities.
+     * Set the model to be used for permissions.
      *
      * @param string  $model
      */
-    public static function useAbilityModel($model)
+    public static function usePermissionModel($model)
     {
-        Models::setAbilitiesModel($model);
+        Models::setPermissionsModel($model);
     }
 
     /**

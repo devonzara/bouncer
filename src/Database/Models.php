@@ -14,13 +14,13 @@ class Models
     protected static $models = [];
 
     /**
-     * Set the model to be used for abilities.
+     * Set the model to be used for permissions.
      *
      * @param string  $model
      */
-    public static function setAbilitiesModel($model)
+    public static function setPermissionsModel($model)
     {
-        static::$models[Ability::class] = $model;
+        static::$models[Permission::class] = $model;
     }
 
     /**
@@ -59,14 +59,14 @@ class Models
     }
 
     /**
-     * Get an instance of the ability model.
+     * Get an instance of the permission model.
      *
      * @param  array  $attributes
-     * @return \Silber\Bouncer\Database\Ability
+     * @return \Silber\Bouncer\Database\Permission
      */
-    public static function ability(array $attributes = [])
+    public static function permission(array $attributes = [])
     {
-        return static::make(Ability::class, $attributes);
+        return static::make(Permission::class, $attributes);
     }
 
     /**

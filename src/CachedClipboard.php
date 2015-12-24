@@ -63,24 +63,24 @@ class CachedClipboard extends Clipboard
     }
 
     /**
-     * Get the given user's abilities.
+     * Get the given user's permissions.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAbilities(Model $user)
+    public function getPermissions(Model $user)
     {
-        $key = $this->tag.'-abilities-'.$user->getKey();
+        $key = $this->tag.'-permissions-'.$user->getKey();
 
-        if ($abilities = $this->cache->get($key)) {
-            return $this->deserializeAbilities($abilities);
+        if ($permissions = $this->cache->get($key)) {
+            return $this->deserializePermissions($permissions);
         }
 
-        $abilities = parent::getAbilities($user);
+        $permissions = parent::getPermissions($user);
 
-        $this->cache->forever($key, $this->serializeAbilities($abilities));
+        $this->cache->forever($key, $this->serializePermissions($permissions));
 
-        return $abilities;
+        return $permissions;
     }
 
     /**
@@ -133,7 +133,7 @@ class CachedClipboard extends Clipboard
     {
         $id = $user instanceof Model ? $user->getKey() : $user;
 
-        $this->cache->forget($this->tag.'-abilities-'.$id);
+        $this->cache->forget($this->tag.'-permissions-'.$id);
 
         $this->cache->forget($this->tag.'-roles-'.$id);
 
@@ -141,26 +141,26 @@ class CachedClipboard extends Clipboard
     }
 
     /**
-     * Deserialize an array of abilities into a collection of models.
+     * Deserialize an array of permissions into a collection of models.
      *
-     * @param  array  $abilities
+     * @param  array  $permissions
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    protected function deserializeAbilities(array $abilities)
+    protected function deserializePermissions(array $permissions)
     {
-        return Models::ability()->hydrate($abilities);
+        return Models::permission()->hydrate($permissions);
     }
 
     /**
-     * Serialize a collection of ability models into a plain array.
+     * Serialize a collection of permission models into a plain array.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $abilities
+     * @param  \Illuminate\Database\Eloquent\Collection  $permissions
      * @return array
      */
-    protected function serializeAbilities(Collection $abilities)
+    protected function serializePermissions(Collection $permissions)
     {
-        return $abilities->map(function ($ability) {
-            return $ability->getAttributes();
+        return $permissions->map(function ($permission) {
+            return $permission->getAttributes();
         })->all();
     }
 }

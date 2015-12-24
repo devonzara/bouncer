@@ -1,8 +1,8 @@
 <?php
 
-class HasRolesAndAbilitiesTraitTest extends BaseTestCase
+class HasRolesAndPermissionsTraitTest extends BaseTestCase
 {
-    public function test_get_abilities_gets_all_abilities()
+    public function test_get_permissions_gets_all_permissions()
     {
         $bouncer = $this->bouncer($user = User::create());
 
@@ -13,11 +13,11 @@ class HasRolesAndAbilitiesTraitTest extends BaseTestCase
 
         $this->assertEquals(
             ['create-posts', 'edit-site'],
-            $user->getAbilities()->pluck('name')->sort()->values()->all()
+            $user->getPermissions()->pluck('name')->sort()->values()->all()
         );
     }
 
-    public function test_can_give_and_remove_abilities()
+    public function test_can_give_and_remove_permissions()
     {
         $gate = $this->gate($user = User::create());
 
@@ -31,7 +31,7 @@ class HasRolesAndAbilitiesTraitTest extends BaseTestCase
         $this->assertTrue($gate->denies('edit-site'));
     }
 
-    public function test_can_give_and_remove_model_abilities()
+    public function test_can_give_and_remove_model_permissions()
     {
         $gate = $this->gate($user = User::create());
 

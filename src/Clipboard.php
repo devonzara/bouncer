@@ -20,46 +20,46 @@ class Clipboard
      */
     public function registerAt(Gate $gate)
     {
-        $gate->before(function ($user, $ability, $model = null, $additional = null) {
+        $gate->before(function ($user, $permission, $model = null, $additional = null) {
             if ( ! is_null($additional)) {
                 return;
             }
 
-            if ($id = $this->checkGetId($user, $ability, $model)) {
-                return $this->allow('Bouncer granted permission via ability #'.$id);
+            if ($id = $this->checkGetId($user, $permission, $model)) {
+                return $this->allow('Bouncer granted permission via permission #'.$id);
             }
         });
     }
 
     /**
-     * Determine if the given user has the given ability.
+     * Determine if the given user has the given permission.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $user
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return bool
      */
-    public function check(Model $user, $ability, $model = null)
+    public function check(Model $user, $permission, $model = null)
     {
-        return (bool) $this->checkGetId($user, $ability, $model);
+        return (bool) $this->checkGetId($user, $permission, $model);
     }
 
     /**
-     * Determine if the given user has the given ability and return the ability ID.
+     * Determine if the given user has the given permission and return the permission ID.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $user
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return int|bool
      */
-    protected function checkGetId(Model $user, $ability, $model = null)
+    protected function checkGetId(Model $user, $permission, $model = null)
     {
-        $abilities = $this->getAbilities($user)->toBase()->lists('identifier', 'id');
+        $permissions = $this->getPermissions($user)->toBase()->lists('identifier', 'id');
 
-        $requested = $this->compileAbilityIdentifiers($ability, $model);
+        $requested = $this->compilePermissionIdentifiers($permission, $model);
 
-        foreach ($abilities as $id => $ability) {
-            if (in_array($ability, $requested)) {
+        foreach ($permissions as $id => $permission) {
+            if (in_array($permission, $requested)) {
                 return $id;
             }
         }
@@ -90,33 +90,33 @@ class Clipboard
     }
 
     /**
-     * Compile a list of ability identifiers that match the provided parameters.
+     * Compile a list of permission identifiers that match the provided parameters.
      *
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return array
      */
-    protected function compileAbilityIdentifiers($ability, $model)
+    protected function compilePermissionIdentifiers($permission, $model)
     {
         if (is_null($model)) {
-            return [strtolower($ability)];
+            return [strtolower($permission)];
         }
 
-        return $this->compileModelAbilityIdentifiers($ability, $model);
+        return $this->compileModelPermissionIdentifiers($permission, $model);
     }
 
     /**
-     * Compile a list of ability identifiers that match the given model.
+     * Compile a list of permission identifiers that match the given model.
      *
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return array
      */
-    protected function compileModelAbilityIdentifiers($ability, $model)
+    protected function compileModelPermissionIdentifiers($permission, $model)
     {
         $model = $model instanceof Model ? $model : new $model;
 
-        $identifier = strtolower($ability.'-'.$model->getMorphClass());
+        $identifier = strtolower($permission.'-'.$model->getMorphClass());
 
         if ( ! $model->exists) {
             return [$identifier];
@@ -137,14 +137,14 @@ class Clipboard
     }
 
     /**
-     * Get a list of the user's abilities.
+     * Get a list of the user's permissions.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAbilities(Model $user)
+    public function getPermissions(Model $user)
     {
-        $query = Models::ability()->whereHas('roles', $this->getRoleUsersConstraint($user));
+        $query = Models::permission()->whereHas('roles', $this->getRoleUsersConstraint($user));
 
         return $query->orWhereHas('users', $this->getUserConstraint($user))->get();
     }

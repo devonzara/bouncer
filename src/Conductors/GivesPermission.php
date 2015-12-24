@@ -3,17 +3,17 @@
 namespace Silber\Bouncer\Conductors;
 
 use Silber\Bouncer\Database\Models;
-use Silber\Bouncer\Database\Ability;
+use Silber\Bouncer\Database\Permission;
 
 use Exception;
 use InvalidArgumentException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 
-class GivesAbility
+class GivesPermission
 {
     /**
-     * The model to be given abilities.
+     * The model to be given permissions.
      *
      * @var \Illuminate\Database\Eloquent\Model|string
      */
@@ -30,35 +30,35 @@ class GivesAbility
     }
 
     /**
-     * Give the abilities to the model.
+     * Give the permissions to the model.
      *
-     * @param  mixed  $abilities
+     * @param  mixed  $permissions
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return bool
      */
-    public function to($abilities, $model = null)
+    public function to($permissions, $model = null)
     {
-        $ids = $this->getAbilityIds($abilities, $model);
+        $ids = $this->getPermissionIds($permissions, $model);
 
-        $this->giveAbilities($ids, $this->getModel());
+        $this->givePermissions($ids, $this->getModel());
 
         return true;
     }
 
     /**
-     * Give abilities to the given model.
+     * Give permissions to the given model.
      *
      * @param  array  $ids
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return void
      */
-    protected function giveAbilities(array $ids, Model $model)
+    protected function givePermissions(array $ids, Model $model)
     {
-        $existing = $model->abilities()->whereIn('id', $ids)->lists('id')->all();
+        $existing = $model->permissions()->whereIn('id', $ids)->lists('id')->all();
 
         $ids = array_diff($ids, $existing);
 
-        $model->abilities()->attach($ids);
+        $model->permissions()->attach($ids);
     }
 
     /**
@@ -76,39 +76,39 @@ class GivesAbility
     }
 
     /**
-     * Get the IDs of the provided abilities.
+     * Get the IDs of the provided permissions.
      *
-     * @param  \Silber\Bouncer\Database\Ability|array|int  $abilities
+     * @param  \Silber\Bouncer\Database\Permission|array|int  $permissions
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return array
      */
-    protected function getAbilityIds($abilities, $model)
+    protected function getPermissionIds($permissions, $model)
     {
-        if ($abilities instanceof Ability) {
-            return [$abilities->getKey()];
+        if ($permissions instanceof Permission) {
+            return [$permissions->getKey()];
         }
 
         if ( ! is_null($model)) {
-            return [$this->getModelAbility($abilities, $model)->getKey()];
+            return [$this->getModelPermission($permissions, $model)->getKey()];
         }
 
-        return $this->abilitiesByName($abilities)->pluck('id')->all();
+        return $this->permissionsByName($permissions)->pluck('id')->all();
     }
 
     /**
-     * Get an ability for the given entity.
+     * Get an permission for the given entity.
      *
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  \Illuminate\Database\Eloquent\Model|string  $entity
-     * @return \Silber\Bouncer\Database\Ability
+     * @return \Silber\Bouncer\Database\Permission
      */
-    protected function getModelAbility($ability, $entity)
+    protected function getModelPermission($permission, $entity)
     {
         $entity = $this->getEntityInstance($entity);
 
-        $model = Models::ability()->where('name', $ability)->forModel($entity, true)->first();
+        $model = Models::permission()->where('name', $permission)->forModel($entity, true)->first();
 
-        return $model ?: Models::ability()->createForModel($entity, $ability);
+        return $model ?: Models::permission()->createForModel($entity, $permission);
     }
 
     /**
@@ -123,8 +123,8 @@ class GivesAbility
             return new $model;
         }
 
-        // Creating an ability for a model that doesn't exist gives the user the
-        // ability on all instances of that model. If the developer passed in
+        // Creating an permission for a model that doesn't exist gives the user the
+        // permission on all instances of that model. If the developer passed in
         // a model instance that does not exist, it is probably a mistake.
         if ( ! $model->exists) {
             throw new InvalidArgumentException(
@@ -136,37 +136,37 @@ class GivesAbility
     }
 
     /**
-     * Get or create abilities by their name.
+     * Get or create permissions by their name.
      *
-     * @param  array|string  $ability
+     * @param  array|string  $permission
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    protected function abilitiesByName($ability)
+    protected function permissionsByName($permission)
     {
-        $abilities = array_unique(is_array($ability) ? $ability : [$ability]);
+        $permissions = array_unique(is_array($permission) ? $permission : [$permission]);
 
-        $models = Models::ability()->simpleAbility()->whereIn('name', $abilities)->get();
+        $models = Models::permission()->simplePermission()->whereIn('name', $permissions)->get();
 
-        $created = $this->createMissingAbilities($models, $abilities);
+        $created = $this->createMissingPermissions($models, $permissions);
 
         return $models->merge($created);
     }
 
     /**
-     * Create abilities whose name is not in the given list.
+     * Create permissions whose name is not in the given list.
      *
      * @param  \Illuminate\Database\Eloquent\Collection  $models
-     * @param  array  $abilities
+     * @param  array  $permissions
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    protected function createMissingAbilities(Collection $models, array $abilities)
+    protected function createMissingPermissions(Collection $models, array $permissions)
     {
-        $missing = array_diff($abilities, $models->pluck('name')->all());
+        $missing = array_diff($permissions, $models->pluck('name')->all());
 
         $created = [];
 
-        foreach ($missing as $ability) {
-            $created[] = Models::ability()->create(['name' => $ability]);
+        foreach ($missing as $permission) {
+            $created[] = Models::permission()->create(['name' => $permission]);
         }
 
         return $created;

@@ -1,11 +1,11 @@
 <?php
 
 use Silber\Bouncer\Database\Role;
-use Silber\Bouncer\Database\Ability;
+use Silber\Bouncer\Database\Permission;
 
 class BouncerSimpleTest extends BaseTestCase
 {
-    public function test_bouncer_can_give_and_remove_abilities()
+    public function test_bouncer_can_give_and_remove_permissions()
     {
         $bouncer = $this->bouncer($user = User::create());
 
@@ -19,7 +19,7 @@ class BouncerSimpleTest extends BaseTestCase
         $this->assertTrue($bouncer->denies('edit-site'));
     }
 
-    public function test_bouncer_can_ignore_duplicate_ability_allowances()
+    public function test_bouncer_can_ignore_duplicate_permission_allowances()
     {
         $user1 = User::create();
         $user2 = User::create();
@@ -67,7 +67,7 @@ class BouncerSimpleTest extends BaseTestCase
         $bouncer->assign('admin')->to($user);
     }
 
-    public function test_bouncer_can_disallow_abilities_on_roles()
+    public function test_bouncer_can_disallow_permissions_on_roles()
     {
         $bouncer = $this->bouncer($user = User::create());
 
@@ -131,19 +131,19 @@ class BouncerSimpleTest extends BaseTestCase
         $this->assertEquals('test-role', $role->name);
     }
 
-    public function test_bouncer_can_get_an_empty_ability_model()
+    public function test_bouncer_can_get_an_empty_permission_model()
     {
         $bouncer = $this->bouncer($user = User::create());
 
-        $this->assertInstanceOf(Ability::class, $bouncer->ability());
+        $this->assertInstanceOf(Permission::class, $bouncer->permission());
     }
 
-    public function test_bouncer_can_fill_an_ability_model()
+    public function test_bouncer_can_fill_an_permission_model()
     {
         $bouncer = $this->bouncer($user = User::create());
-        $ability = $bouncer->ability(['name' => 'test-ability']);
+        $permission = $bouncer->permission(['name' => 'test-permission']);
 
-        $this->assertInstanceOf(Ability::class, $ability);
-        $this->assertEquals('test-ability', $ability->name);
+        $this->assertInstanceOf(Permission::class, $permission);
+        $this->assertEquals('test-permission', $permission->name);
     }
 }

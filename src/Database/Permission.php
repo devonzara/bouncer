@@ -5,14 +5,14 @@ namespace Silber\Bouncer\Database;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Ability extends Model
+class Permission extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'abilities';
+    protected $table = 'permissions';
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +22,7 @@ class Ability extends Model
     protected $fillable = ['name'];
 
     /**
-     * Create a new ability for a specific model.
+     * Create a new permission for a specific model.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
      * @param  string  $name
@@ -44,7 +44,7 @@ class Ability extends Model
      */
     public function roles()
     {
-        return $this->belongsToMany(Models::classname(Role::class), 'role_abilities');
+        return $this->belongsToMany(Models::classname(Role::class));
     }
 
     /**
@@ -54,11 +54,11 @@ class Ability extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(Models::classname(User::class), 'user_abilities');
+        return $this->belongsToMany(Models::classname(User::class));
     }
 
     /**
-     * Get the identifier for this ability.
+     * Get the identifier for this permission.
      *
      * @return string
      */
@@ -78,7 +78,7 @@ class Ability extends Model
     }
 
     /**
-     * Get the ability's "slug" attribute.
+     * Get the permission's "slug" attribute.
      *
      * @return string
      */
@@ -88,12 +88,12 @@ class Ability extends Model
     }
 
     /**
-     * Constrain a query to simple abilities.
+     * Constrain a query to simple permissions.
      *
      * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $query
      * @return void
      */
-    public function scopeSimpleAbility($query)
+    public function scopeSimplePermission($query)
     {
         $query->where(function ($query) {
             $query->whereNull('entity_id')->whereNull('entity_type');
@@ -101,7 +101,7 @@ class Ability extends Model
     }
 
     /**
-     * Constrain a query to an ability for a specific model.
+     * Constrain a query to an permission for a specific model.
      *
      * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder  $query
      * @param  \Illuminate\Database\Eloquent\Model|string  $model
@@ -116,9 +116,9 @@ class Ability extends Model
             $query->where('entity_type', $model->getMorphClass());
 
             $query->where(function ($query) use ($model, $strict) {
-                // If the model does not exist, we want to search for blanket abilities
+                // If the model does not exist, we want to search for blanket permissions
                 // that cover all instances of this model. If it does exist, we only
-                // want to find blanket abilities if we're not using strict mode.
+                // want to find blanket permissions if we're not using strict mode.
                 if ( ! $model->exists || ! $strict) {
                     $query->whereNull('entity_id');
                 }

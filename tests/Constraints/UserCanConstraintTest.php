@@ -2,7 +2,7 @@
 
 class UserCanConstraintTest extends BaseTestCase
 {
-    public function test_users_can_be_constrained_to_an_ability()
+    public function test_users_can_be_constrained_to_an_permission()
     {
         $user1 = User::create(['name' => 'Joseph']);
         $user2 = User::create(['name' => 'Silber']);
@@ -16,7 +16,7 @@ class UserCanConstraintTest extends BaseTestCase
         $this->assertEquals('Joseph', $users->first()->name);
     }
 
-    public function test_users_can_be_constrained_to_an_ability_granted_through_a_role()
+    public function test_users_can_be_constrained_to_an_permission_granted_through_a_role()
     {
         $user1 = User::create(['name' => 'Joseph']);
         $user2 = User::create(['name' => 'Silber']);
@@ -32,7 +32,7 @@ class UserCanConstraintTest extends BaseTestCase
         $this->assertEquals('Joseph', $users->first()->name);
     }
 
-    public function test_users_can_be_constrained_to_a_model_ability()
+    public function test_users_can_be_constrained_to_a_model_permission()
     {
         $user1 = User::create(['name' => 'Joseph']);
         $user2 = User::create(['name' => 'Silber']);
@@ -52,7 +52,7 @@ class UserCanConstraintTest extends BaseTestCase
         $this->assertCount(2, $users);
     }
 
-    public function test_users_can_be_constrained_to_a_model_ability_granted_through_a_role()
+    public function test_users_can_be_constrained_to_a_model_permission_granted_through_a_role()
     {
         $user1 = User::create(['name' => 'Joseph']);
         $user2 = User::create(['name' => 'Silber']);
@@ -75,7 +75,7 @@ class UserCanConstraintTest extends BaseTestCase
         $this->assertCount(2, $users);
     }
 
-    public function test_users_can_be_constrained_to_a_model_blanket_ability()
+    public function test_users_can_be_constrained_to_a_model_blanket_permission()
     {
         $user1 = User::create(['name' => 'Joseph']);
         $user2 = User::create(['name' => 'Silber']);
@@ -89,7 +89,7 @@ class UserCanConstraintTest extends BaseTestCase
         $this->assertEquals('Joseph', $users->first()->name);
     }
 
-    public function test_users_can_be_constrained_to_a_model_blanket_ability_granted_through_a_role()
+    public function test_users_can_be_constrained_to_a_model_blanket_permission_granted_through_a_role()
     {
         $user1 = User::create(['name' => 'Joseph']);
         $user2 = User::create(['name' => 'Silber']);

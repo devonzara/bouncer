@@ -6,7 +6,7 @@ use Silber\Bouncer\Bouncer;
 use Silber\Bouncer\Seed\Seeder;
 use Silber\Bouncer\CachedClipboard;
 use Silber\Bouncer\Database\Models;
-use Silber\Bouncer\Database\HasRolesAndAbilities;
+use Silber\Bouncer\Database\HasRolesAndPermissions;
 
 use Illuminate\Auth\Access\Gate;
 use Illuminate\Cache\ArrayStore;
@@ -129,7 +129,7 @@ abstract class BaseTestCase extends PHPUnit_Framework_TestCase
 
 class User extends Eloquent
 {
-    use HasRolesAndAbilities;
+    use HasRolesAndPermissions;
 
     protected $table = 'users';
 

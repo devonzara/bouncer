@@ -14,7 +14,7 @@ class CreateBouncerTables extends Migration
      */
     public function up()
     {
-        Schema::create($this->abilities(), function (Blueprint $table) {
+        Schema::create($this->permissions(), function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->integer('entity_id')->unsigned()->nullable();
@@ -30,7 +30,7 @@ class CreateBouncerTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('user_roles', function (Blueprint $table) {
+        Schema::create('role_user', function (Blueprint $table) {
             $table->integer('role_id')->unsigned();
             $table->integer('user_id')->unsigned();
 
@@ -43,26 +43,26 @@ class CreateBouncerTables extends Migration
                   ->onUpdate('cascade')->onDelete('cascade');
         });
 
-        Schema::create('user_abilities', function (Blueprint $table) {
-            $table->integer('ability_id')->unsigned();
+        Schema::create('permission_user', function (Blueprint $table) {
+            $table->integer('permission_id')->unsigned();
             $table->integer('user_id')->unsigned();
 
-            $table->unique(['ability_id', 'user_id']);
+            $table->unique(['permission_id', 'user_id']);
 
-            $table->foreign('ability_id')->references('id')->on($this->abilities())
+            $table->foreign('permission_id')->references('id')->on($this->permissions())
                   ->onUpdate('cascade')->onDelete('cascade');
 
             $table->foreign('user_id')->references('id')->on($this->users())
                   ->onUpdate('cascade')->onDelete('cascade');
         });
 
-        Schema::create('role_abilities', function (Blueprint $table) {
-            $table->integer('ability_id')->unsigned();
+        Schema::create('permission_role', function (Blueprint $table) {
+            $table->integer('permission_id')->unsigned();
             $table->integer('role_id')->unsigned();
 
-            $table->unique(['ability_id', 'role_id']);
+            $table->unique(['permission_id', 'role_id']);
 
-            $table->foreign('ability_id')->references('id')->on($this->abilities())
+            $table->foreign('permission_id')->references('id')->on($this->permissions())
                   ->onUpdate('cascade')->onDelete('cascade');
 
             $table->foreign('role_id')->references('id')->on($this->roles())
@@ -77,21 +77,21 @@ class CreateBouncerTables extends Migration
      */
     public function down()
     {
-        Schema::drop('role_abilities');
-        Schema::drop('user_abilities');
-        Schema::drop('user_roles');
+        Schema::drop('permission_role');
+        Schema::drop('permission_user');
+        Schema::drop('role_user');
         Schema::drop($this->roles());
-        Schema::drop($this->abilities());
+        Schema::drop($this->permissions());
     }
 
     /**
-     * Get the table name for the ability model.
+     * Get the table name for the permission model.
      *
      * @return string
      */
-    protected function abilities()
+    protected function permissions()
     {
-        return Models::ability()->getTable();
+        return Models::permission()->getTable();
     }
 
     /**

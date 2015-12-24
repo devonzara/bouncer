@@ -4,7 +4,7 @@ namespace Silber\Bouncer\Database;
 
 use App\User;
 use Illuminate\Database\Eloquent\Model;
-use Silber\Bouncer\Database\Constraints\Abilities as AbilitiesConstraint;
+use Silber\Bouncer\Database\Constraints\Permissions as PermissionsConstraint;
 
 class Role extends Model
 {
@@ -23,13 +23,13 @@ class Role extends Model
     protected $fillable = ['name'];
 
     /**
-     * The abilities relationship.
+     * The permissions relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function abilities()
+    public function permissions()
     {
-        return $this->belongsToMany(Models::classname(Ability::class), 'role_abilities');
+        return $this->belongsToMany(Models::classname(Permission::class));
     }
 
     /**
@@ -39,19 +39,19 @@ class Role extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(Models::classname(User::class), 'user_roles');
+        return $this->belongsToMany(Models::classname(User::class));
     }
 
     /**
-     * Constrain the given query by the provided ability.
+     * Constrain the given query by the provided permission.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $ability
+     * @param  string  $permission
      * @param  \Illuminate\Database\Eloquent\Model|string|null  $model
      * @return void
      */
-    public function scopeWhereCan($query, $ability, $model = null)
+    public function scopeWhereCan($query, $permission, $model = null)
     {
-        (new AbilitiesConstraint)->constrainRoles($query, $ability, $model);
+        (new PermissionsConstraint)->constrainRoles($query, $permission, $model);
     }
 }

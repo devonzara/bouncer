@@ -1,8 +1,8 @@
 <?php
 
-class AbilitiesForModelsTest extends BaseTestCase
+class PermissionsForModelsTest extends BaseTestCase
 {
-    public function test_model_blanket_ability()
+    public function test_model_blanket_permission()
     {
         $user1 = User::create();
         $user2 = User::create();
@@ -30,7 +30,7 @@ class AbilitiesForModelsTest extends BaseTestCase
         $this->assertTrue($bouncer->denies('edit', $user2));
     }
 
-    public function test_individual_model_ability()
+    public function test_individual_model_permission()
     {
         $user1 = User::create();
         $user2 = User::create();
@@ -63,7 +63,7 @@ class AbilitiesForModelsTest extends BaseTestCase
         $this->assertTrue($bouncer->denies('edit', $user2));
     }
 
-    public function test_blanket_ability_and_individual_model_ability_are_kept_separate()
+    public function test_blanket_permission_and_individual_model_permission_are_kept_separate()
     {
         $user1 = User::create();
         $user2 = User::create();
