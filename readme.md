@@ -8,10 +8,10 @@ This package adds a bouncer at Laravel's access gate.
 - [Usage](#usage)
   - [Creating roles and permissions](#creating-roles-and-permissions)
   - [Assigning roles to a user](#assigning-roles-to-a-user)
-  - [Giving a user an permission directly](#giving-a-user-an-permission-directly)
-  - [Restricting an permission to a model](#restricting-an-permission-to-a-model)
+  - [Giving a user a permission directly](#giving-a-user-a-permission-directly)
+  - [Restricting a permission to a model](#restricting-a-permission-to-a-model)
   - [Retracting a role from a user](#retracting-a-role-from-a-user)
-  - [Removing an permission](#removing-an-permission)
+  - [Removing a permission](#removing-a-permission)
   - [Checking a user's roles](#checking-a-users-roles)
   - [Getting all permissions for a user](#getting-all-permissions-for-a-user)
   - [Authorizing users](#authorizing-users)
@@ -39,11 +39,11 @@ Bouncer::allow($user)->to('create', Post::class);
 Bouncer::allow('admin')->to('create', Post::class);
 Bouncer::assign('admin')->to($user);
 
-// You can also grant an permission only to a specific model
+// You can also grant a permission only to a specific model
 Bouncer::allow($user)->to('edit', $post);
 ```
 
-When you check permissions at the gate, the bouncer will be consulted first. If he sees an permission that has been granted to the current user (whether directly, or through a role) he'll authorize the check.
+When you check permissions at the gate, the bouncer will be consulted first. If he sees a permission that has been granted to the current user (whether directly, or through a role) he'll authorize the check.
 
 ## Installation
 
@@ -116,7 +116,7 @@ Bouncer::cache();
 
 ## Usage
 
-Adding roles and permissions to users is made extremely easy. You do not have to create a role or an permission in advance. Simply pass the name of the role/permission, and Bouncer will create it if it doesn't exist.
+Adding roles and permissions to users is made extremely easy. You do not have to create a role or a permission in advance. Simply pass the name of the role/permission, and Bouncer will create it if it doesn't exist.
 
 > **Note:** the examples below all use the `Bouncer` facade. If you don't like facades, you can instead inject an instance of `Silber\Bouncer\Bouncer` into your class.
 
@@ -144,9 +144,9 @@ Alternatively, you can call the `assign` method directly on the user:
 $user->assign('admin');
 ```
 
-### Giving a user an permission directly
+### Giving a user a permission directly
 
-Sometimes you might want to give a user an permission directly, without using a role:
+Sometimes you might want to give a user a permission directly, without using a role:
 
 ```php
 Bouncer::allow($user)->to('ban-users');
@@ -158,9 +158,9 @@ Here too you can accomplish the same directly off of the user:
 $user->allow('ban-users');
 ```
 
-### Restricting an permission to a model
+### Restricting a permission to a model
 
-Sometimes you might want to restrict an permission to a specific model type. Simply pass the model name as a second argument:
+Sometimes you might want to restrict a permission to a specific model type. Simply pass the model name as a second argument:
 
 ```php
 Bouncer::allow($user)->to('edit', Post::class);
@@ -186,9 +186,9 @@ Or do it directly on the user:
 $user->retract('admin');
 ```
 
-### Removing an permission
+### Removing a permission
 
-The bouncer can also remove an permission previously granted to a user:
+The bouncer can also remove a permission previously granted to a user:
 
 ```php
 Bouncer::disallow($user)->to('ban-users');
@@ -208,15 +208,15 @@ If the permission has been granted through a role, tell the bouncer to remove th
 Bouncer::disallow('admin')->to('ban-users');
 ```
 
-To remove an permission for a specific model type, pass in its name as a second argument:
+To remove a permission for a specific model type, pass in its name as a second argument:
 
 ```php
 Bouncer::disallow($user)->to('delete', Post::class);
 ```
 
-> **Warning:** if the user has an permission to `delete` a specific `$post` instance, the code above will *not* remove that permission. You will have to remove the permission separately - by passing in the actual `$post` as a second argument - as shown below.
+> **Warning:** if the user has a permission to `delete` a specific `$post` instance, the code above will *not* remove that permission. You will have to remove the permission separately - by passing in the actual `$post` as a second argument - as shown below.
 
-To remove an permission for a specific model instance, pass in the actual model instead:
+To remove a permission for a specific model instance, pass in the actual model instead:
 
 ```php
 Bouncer::disallow($user)->to('delete', $post);
