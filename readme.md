@@ -50,7 +50,19 @@ When you check permissions at the gate, the bouncer will be consulted first. If 
 Simply install the bouncer package with composer:
 
 ```
-$ composer require silber/bouncer
+"repositories": [
+	{
+		"url": "https://github.com/devonzara/bouncer",
+		"type": "vcs"
+	}
+],
+"require": {
+	"silber/bouncer": "*"
+}
+```
+
+```
+$ composer update silber/bouncer
 ```
 
 Once the composer installation completes, you can add the service provider and alias the facade. Open `config/app.php`, and make the following changes:
